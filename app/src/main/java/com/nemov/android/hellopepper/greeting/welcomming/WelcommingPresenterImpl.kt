@@ -1,7 +1,7 @@
 package com.nemov.android.hellopepper.greeting.welcomming
 
-class WelcommingPresenterImpl(serviceProvider: WelcommingServiceProvider) : WelcommingPresenter {
-    private val useCase = serviceProvider.provideWelcommingUseCase()
+class WelcommingPresenterImpl(serviceLocator: WelcommingServiceLocator) : WelcommingPresenter {
+    private val useCase = serviceLocator.provideWelcommingUseCase()
 
     override suspend fun startWelcommingChat() {
         useCase.startWelcommingChat()

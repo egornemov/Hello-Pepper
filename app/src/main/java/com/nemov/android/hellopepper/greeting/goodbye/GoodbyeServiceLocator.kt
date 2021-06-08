@@ -4,7 +4,7 @@ import com.aldebaran.qi.sdk.QiContext
 import com.nemov.android.hellopepper.logger.LoggerGateway
 import kotlinx.coroutines.CoroutineDispatcher
 
-interface GoodbyeServiceProvider {
+interface GoodbyeServiceLocator {
     fun provideGoodbyeUseCase(): GoodbyeUseCase
     fun provideGoodbyeView(): GoodbyePresenter.GreetingView
     fun provideGoodbyePresenter(): GoodbyePresenter

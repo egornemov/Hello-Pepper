@@ -3,7 +3,7 @@ package com.nemov.android.libuniquejokes
 import android.content.Context
 import kotlinx.coroutines.CoroutineDispatcher
 
-interface JokeServiceProvider {
+interface JokeServiceLocator {
     fun provideJokeUseCase(): JokeUseCase
     fun provideJokeView(): JokePresenter.JokeView
     fun provideJokePresenter(): JokePresenter

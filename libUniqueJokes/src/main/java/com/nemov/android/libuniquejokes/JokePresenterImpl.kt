@@ -1,9 +1,9 @@
 package com.nemov.android.libuniquejokes
 
-class JokePresenterImpl(serviceProvider: JokeServiceProvider, private val view: JokePresenter.JokeView)
+class JokePresenterImpl(serviceLocator: JokeServiceLocator, private val view: JokePresenter.JokeView)
     : JokePresenter {
 
-    private val useCase = serviceProvider.provideJokeUseCase()
+    private val useCase = serviceLocator.provideJokeUseCase()
 
     override suspend fun makeJoke() {
         view.loadingForJoke()

@@ -3,7 +3,7 @@ package com.nemov.android.hellopepper.greeting.welcomming
 import com.aldebaran.qi.sdk.QiContext
 import kotlinx.coroutines.CoroutineDispatcher
 
-interface WelcommingServiceProvider {
+interface WelcommingServiceLocator {
     fun provideWelcommingUseCase(): WelcommingUseCase
     fun provideWelcommingPresenter(): WelcommingPresenter
     fun provideWelcommingController(): WelcommingController

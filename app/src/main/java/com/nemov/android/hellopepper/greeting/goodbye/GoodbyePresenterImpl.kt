@@ -1,10 +1,10 @@
 package com.nemov.android.hellopepper.greeting.goodbye
 
-class GoodbyePresenterImpl(serviceProvider: GoodbyeServiceProvider,
+class GoodbyePresenterImpl(serviceLocator: GoodbyeServiceLocator,
                            private val view: GoodbyePresenter.GreetingView
 ) : GoodbyePresenter {
 
-    private val useCase = serviceProvider.provideGoodbyeUseCase()
+    private val useCase = serviceLocator.provideGoodbyeUseCase()
 
     override suspend fun startGoodbyeAction() {
         view.goodbyeInAction()

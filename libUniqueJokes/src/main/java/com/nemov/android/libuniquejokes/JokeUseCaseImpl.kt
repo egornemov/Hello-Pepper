@@ -1,10 +1,10 @@
 package com.nemov.android.libuniquejokes
 
-class JokeUseCaseImpl(serviceProvider: JokeServiceProvider,
+class JokeUseCaseImpl(serviceLocator: JokeServiceLocator,
                       private val numberOfAttempts: Int = NUMBER_OF_ATTEMPTS): JokeUseCase {
-    private val presenter: JokePresenter by lazy { serviceProvider.provideJokePresenter() }
-    private val controller = serviceProvider.provideJokeController()
-    private val gateway = serviceProvider.provideJokeGateway()
+    private val presenter: JokePresenter by lazy { serviceLocator.provideJokePresenter() }
+    private val controller = serviceLocator.provideJokeController()
+    private val gateway = serviceLocator.provideJokeGateway()
 
     override suspend fun makeJoke() {
         val joke = uniqueJoke()

@@ -2,7 +2,7 @@ package com.nemov.android.hellopepper.greeting.welcomming
 
 import kotlinx.coroutines.Dispatchers
 
-abstract class BaseWelcommingServiceProvider : WelcommingServiceProvider {
+abstract class BaseWelcommingServiceLocator : WelcommingServiceLocator {
     override fun provideWelcommingUseCase() = WelcommingUseCaseImpl(this)
 
     override fun provideWelcommingPresenter() = WelcommingPresenterImpl(this)

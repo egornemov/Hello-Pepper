@@ -3,20 +3,20 @@ package com.nemov.android.hellopepper
 import android.app.Application
 import com.aldebaran.qi.sdk.QiContext
 import com.nemov.android.hellopepper.greeting.*
-import com.nemov.android.hellopepper.greeting.goodbye.BaseGoodbyeServiceProvider
+import com.nemov.android.hellopepper.greeting.goodbye.BaseGoodbyeServiceLocator
 import com.nemov.android.hellopepper.greeting.goodbye.GoodbyePresenter
-import com.nemov.android.hellopepper.greeting.welcomming.BaseWelcommingServiceProvider
+import com.nemov.android.hellopepper.greeting.welcomming.BaseWelcommingServiceLocator
 import com.nemov.android.hellopepper.greeting.welcomming.WelcommingPresenter
-import com.nemov.android.libuniquejokes.BaseJokeServiceProvider
+import com.nemov.android.libuniquejokes.BaseJokeServiceLocator
 import com.nemov.android.libuniquejokes.JokePresenter
 
 class HelloPepperApplication : Application(), PresentersProvider, ViewContext, QiContextProvider {
 
-    private val welcommingServiceProvider = object : BaseWelcommingServiceProvider() {
+    private val welcommingServiceLocator = object : BaseWelcommingServiceLocator() {
         override fun provideQiContext() = qiContext
     }
 
-    private val goodbyeServiceProvider = object : BaseGoodbyeServiceProvider() {
+    private val goodbyeServiceLocator = object : BaseGoodbyeServiceLocator() {
         override fun provideGoodbyeView() = goodbyeView
         override fun provideQiContext() = qiContext
     }
@@ -27,9 +27,8 @@ class HelloPepperApplication : Application(), PresentersProvider, ViewContext, Q
         goodbyeView = view
     }
 
-    private val jokeServiceProvider = object : BaseJokeServiceProvider() {
+    private val jokeServiceLocator = object : BaseJokeServiceLocator() {
         override fun provideJokeView() = jokeView
-
         override fun provideContext() = this@HelloPepperApplication
     }
 
@@ -39,11 +38,11 @@ class HelloPepperApplication : Application(), PresentersProvider, ViewContext, Q
         jokeView = view
     }
 
-    override fun provideWelcommigPresenter() = welcommingServiceProvider.provideWelcommingPresenter()
+    override fun provideWelcommigPresenter() = welcommingServiceLocator.provideWelcommingPresenter()
 
-    override fun provideGoodbyePresenter() = goodbyeServiceProvider.provideGoodbyePresenter()
+    override fun provideGoodbyePresenter() = goodbyeServiceLocator.provideGoodbyePresenter()
 
-    override fun provideJokePresenter() = jokeServiceProvider.provideJokePresenter()
+    override fun provideJokePresenter() = jokeServiceLocator.provideJokePresenter()
 
     private lateinit var qiContext: QiContext
 

@@ -3,7 +3,7 @@ package com.nemov.android.hellopepper.greeting.goodbye
 import com.nemov.android.hellopepper.logger.LoggerGatewayImpl
 import kotlinx.coroutines.Dispatchers
 
-abstract class BaseGoodbyeServiceProvider : GoodbyeServiceProvider {
+abstract class BaseGoodbyeServiceLocator : GoodbyeServiceLocator {
     override fun provideGoodbyeUseCase() = GoodbyeUseCaseImpl(this)
 
     override fun provideGoodbyePresenter() = GoodbyePresenterImpl(this, provideGoodbyeView())

@@ -2,7 +2,7 @@ package com.nemov.android.libuniquejokes
 
 import kotlinx.coroutines.Dispatchers
 
-abstract class BaseJokeServiceProvider: JokeServiceProvider {
+abstract class BaseJokeServiceLocator: JokeServiceLocator {
     override fun provideJokeUseCase() = JokeUseCaseImpl(this)
 
     override fun provideJokePresenter() = JokePresenterImpl(this, provideJokeView())
