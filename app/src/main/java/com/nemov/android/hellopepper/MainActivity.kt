@@ -1,14 +1,20 @@
 package com.nemov.android.hellopepper
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.Toast
+import com.aldebaran.qi.sdk.QiContext
+import com.aldebaran.qi.sdk.QiSDK
+import com.aldebaran.qi.sdk.RobotLifecycleCallbacks
+import com.aldebaran.qi.sdk.`object`.conversation.*
+import com.aldebaran.qi.sdk.builder.ChatBuilder
+import com.aldebaran.qi.sdk.builder.QiChatbotBuilder
+import com.aldebaran.qi.sdk.builder.TopicBuilder
+import com.aldebaran.qi.sdk.design.activity.RobotActivity
 import com.nemov.android.hellopepper.databinding.ActivityMainBinding
 import com.nemov.android.hellopepper.greeting.GreetingPresenter
 import com.nemov.android.libuniquejokes.JokePresenter
 import kotlinx.coroutines.*
 
-class MainActivity : AppCompatActivity(), GreetingPresenter.GreetingView, JokePresenter.JokeView {
+class MainActivity : RobotActivity(), RobotLifecycleCallbacks, GreetingPresenter.GreetingView, JokePresenter.JokeView {
 
     private val mainScope = MainScope()
 
@@ -32,6 +38,7 @@ class MainActivity : AppCompatActivity(), GreetingPresenter.GreetingView, JokePr
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        QiSDK.register(this, this)
         setViewContext()
         initPresents()
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -42,7 +49,55 @@ class MainActivity : AppCompatActivity(), GreetingPresenter.GreetingView, JokePr
 
     override fun onDestroy() {
         mainScope.cancel()
+        QiSDK.unregister(this, this)
         super.onDestroy()
+    }
+
+    private lateinit var welcommingChat: Chat
+
+    private fun initWelcommingChat(qiContext: QiContext) {
+        val welcommingTopic = TopicBuilder.with(qiContext)
+            .withResource(R.raw.welcomming)
+            .build()
+        val welcommingChatbot = QiChatbotBuilder.with(qiContext)
+            .withTopic(welcommingTopic)
+            .build()
+        welcommingChat = ChatBuilder.with(qiContext)
+            .withChatbot(welcommingChatbot)
+            .build()
+    }
+
+    private lateinit var goodbyeChat: Chat
+
+    private fun initGoodbyeChat(qiContext: QiContext) {
+        val goodbyeTopic = TopicBuilder.with(qiContext)
+            .withResource(R.raw.goodbye)
+            .build()
+        val goodbyeChatbot = QiChatbotBuilder.with(qiContext)
+            .withTopic(goodbyeTopic)
+            .build()
+        goodbyeChat = ChatBuilder.with(qiContext)
+            .withChatbot(goodbyeChatbot)
+            .build()
+        val bookmarks: Map<String, Bookmark> = goodbyeTopic.bookmarks
+        val proposalBookmark = bookmarks["goodbye_proposal"]
+        goodbyeChat.addOnStartedListener {
+            goodbyeChatbot.goToBookmark(proposalBookmark, AutonomousReactionImportance.HIGH, AutonomousReactionValidity.IMMEDIATE)
+        }
+    }
+
+    override fun onRobotFocusGained(qiContext: QiContext) {
+        initGoodbyeChat(qiContext)
+        initWelcommingChat(qiContext)
+        welcommingChat.run()
+    }
+
+    override fun onRobotFocusLost() {
+        // The robot focus is lost.
+    }
+
+    override fun onRobotFocusRefused(reason: String) {
+        // The robot focus is refused.
     }
 
     private fun setupDataFlow() {
@@ -60,8 +115,7 @@ class MainActivity : AppCompatActivity(), GreetingPresenter.GreetingView, JokePr
 
     override fun startGreeting(message: String) {
         mainScope.launch {
-            Toast.makeText(this@MainActivity, message, Toast.LENGTH_SHORT).show()
-            delay(5000)
+            goodbyeChat.run()
             greetingPresenter.finishGreeting()
         }
     }
