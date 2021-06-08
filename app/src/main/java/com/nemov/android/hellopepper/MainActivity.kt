@@ -4,13 +4,10 @@ import android.os.Bundle
 import com.aldebaran.qi.sdk.QiContext
 import com.aldebaran.qi.sdk.QiSDK
 import com.aldebaran.qi.sdk.RobotLifecycleCallbacks
-import com.aldebaran.qi.sdk.`object`.conversation.*
-import com.aldebaran.qi.sdk.builder.ChatBuilder
-import com.aldebaran.qi.sdk.builder.QiChatbotBuilder
-import com.aldebaran.qi.sdk.builder.TopicBuilder
 import com.aldebaran.qi.sdk.design.activity.RobotActivity
 import com.nemov.android.hellopepper.databinding.ActivityMainBinding
 import com.nemov.android.hellopepper.greeting.goodbye.GoodbyePresenter
+import com.nemov.android.hellopepper.greeting.welcomming.WelcommingPresenter
 import com.nemov.android.libuniquejokes.JokePresenter
 import kotlinx.coroutines.*
 
@@ -20,13 +17,14 @@ class MainActivity : RobotActivity(), RobotLifecycleCallbacks, GoodbyePresenter.
 
     private lateinit var binding: ActivityMainBinding
 
+    private lateinit var welcommingPresenter: WelcommingPresenter
     private lateinit var goodbyePresenter: GoodbyePresenter
-
     private lateinit var jokePresenter: JokePresenter
 
     private fun initPresents() {
         val presentersProvider = application as PresentersProvider
-        goodbyePresenter = presentersProvider.provideGreetingPresenter()
+        welcommingPresenter = presentersProvider.provideWelcommigPresenter()
+        goodbyePresenter = presentersProvider.provideGoodbyePresenter()
         jokePresenter = presentersProvider.provideJokePresenter()
     }
 
@@ -58,23 +56,11 @@ class MainActivity : RobotActivity(), RobotLifecycleCallbacks, GoodbyePresenter.
         super.onDestroy()
     }
 
-    private lateinit var welcommingChat: Chat
-
-    private fun initWelcommingChat(qiContext: QiContext) {
-        val welcommingTopic = TopicBuilder.with(qiContext)
-            .withResource(R.raw.welcomming)
-            .build()
-        val welcommingChatbot = QiChatbotBuilder.with(qiContext)
-            .withTopic(welcommingTopic)
-            .build()
-        welcommingChat = ChatBuilder.with(qiContext)
-            .withChatbot(welcommingChatbot)
-            .build()
-    }
-
     override fun onRobotFocusGained(qiContext: QiContext) {
         setQiContext(qiContext)
-        welcommingChat.run()
+        mainScope.launch {
+            welcommingPresenter.startWelcommingChat()
+        }
     }
 
     override fun onRobotFocusLost() {

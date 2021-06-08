@@ -11,7 +11,7 @@ import com.aldebaran.qi.sdk.builder.TopicBuilder
 import com.nemov.android.hellopepper.R
 import kotlinx.coroutines.*
 
-class GoodbyeControllerImpl(private val qiContext: QiContext,
+class GoodbyeControllerImpl(qiContext: QiContext,
                             private val dispatcher: CoroutineDispatcher) : GoodbyeController {
 
     private val goodbyeChat: Chat
