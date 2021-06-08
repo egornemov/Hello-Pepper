@@ -4,12 +4,9 @@ import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.engine.android.*
 import io.ktor.client.features.json.*
-import io.ktor.client.features.logging.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
-import io.ktor.http.cio.*
-import kotlin.math.absoluteValue
 
 class JokeControllerImpl: JokeController {
 
@@ -18,14 +15,7 @@ class JokeControllerImpl: JokeController {
             serializer = GsonSerializer()
             acceptContentTypes += ContentType("application", "json")
         }
-        install(Logging) {
-            logger = Logger.DEFAULT
-            level = LogLevel.HEADERS
-        }
         expectSuccess = false
-        io.ktor.client.features.observer.ResponseObserver { response ->
-            println("HTTP status: ${response.status.value}")
-        }
     }
 
     override suspend fun getJoke(): String? =
@@ -38,12 +28,6 @@ class JokeControllerImpl: JokeController {
             } else {
                 null
             }
-
-//            if (it.isSuccess) {
-//                it.value.joke
-//            } else {
-//                null
-//            }
         }
 
     data class Joke(val value: JokeValue)
