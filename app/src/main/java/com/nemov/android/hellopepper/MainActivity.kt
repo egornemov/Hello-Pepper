@@ -5,9 +5,7 @@ import android.os.Bundle
 import android.widget.Toast
 import com.nemov.android.hellopepper.databinding.ActivityMainBinding
 import com.nemov.android.hellopepper.greeting.GreetingPresenter
-import com.nemov.android.hellopepper.greeting.GreetingServiceProvider
 import com.nemov.android.libuniquejokes.JokePresenter
-import com.nemov.android.libuniquejokes.JokeServiceProvider
 import kotlinx.coroutines.*
 
 class MainActivity : AppCompatActivity(), GreetingPresenter.GreetingView, JokePresenter.JokeView {
