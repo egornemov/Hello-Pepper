@@ -7,28 +7,35 @@ import com.aldebaran.qi.sdk.builder.QiChatbotBuilder
 import com.aldebaran.qi.sdk.builder.TopicBuilder
 import com.nemov.android.hellopepper.R
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
 class WelcommingControllerImpl(qiContext: QiContext,
-                               private val dispatcher: CoroutineDispatcher) : WelcommingController {
+                               dispatcher: CoroutineDispatcher) : WelcommingController {
 
-    private val welcommingChat: Chat
+    private lateinit var welcommingChat: Chat
+
+    private val scope = CoroutineScope(dispatcher)
 
     init {
-        val goodbyeTopic = TopicBuilder.with(qiContext)
-            .withResource(R.raw.welcomming)
-            .build()
-        val goodbyeChatbot = QiChatbotBuilder.with(qiContext)
-            .withTopic(goodbyeTopic)
-            .build()
-        welcommingChat = ChatBuilder.with(qiContext)
-            .withChatbot(goodbyeChatbot)
-            .build()
+        scope.launch {
+            val goodbyeTopic = TopicBuilder.with(qiContext)
+                .withResource(R.raw.welcomming)
+                .build()
+            val goodbyeChatbot = QiChatbotBuilder.with(qiContext)
+                .withTopic(goodbyeTopic)
+                .build()
+            welcommingChat = ChatBuilder.with(qiContext)
+                .withChatbot(goodbyeChatbot)
+                .build()
+        }
     }
 
     override suspend fun startWelcommingChat() {
-        withContext(dispatcher) {
-            welcommingChat.run()
+        scope.launch {
+            if (this@WelcommingControllerImpl::welcommingChat.isInitialized) {
+                welcommingChat.run()
+            }
         }
     }
 }

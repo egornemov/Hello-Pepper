@@ -12,39 +12,41 @@ import com.nemov.android.hellopepper.R
 import kotlinx.coroutines.*
 
 class GoodbyeControllerImpl(qiContext: QiContext,
-                            private val dispatcher: CoroutineDispatcher) : GoodbyeController {
+                            dispatcher: CoroutineDispatcher) : GoodbyeController {
 
-    private val goodbyeChat: Chat
+    private lateinit var goodbyeChat: Chat
+
+    private val scope = CoroutineScope(dispatcher)
 
     init {
-        val goodbyeTopic = TopicBuilder.with(qiContext)
-            .withResource(R.raw.goodbye)
-            .build()
-        val goodbyeChatbot = QiChatbotBuilder.with(qiContext)
-            .withTopic(goodbyeTopic)
-            .build()
-        goodbyeChat = ChatBuilder.with(qiContext)
-            .withChatbot(goodbyeChatbot)
-            .build()
-        val bookmarks: Map<String, Bookmark> = goodbyeTopic.bookmarks
-        val proposalBookmark = bookmarks[PROPOSAL_BOOKMARK]
-        goodbyeChat.addOnStartedListener {
-            goodbyeChatbot.goToBookmark(proposalBookmark, AutonomousReactionImportance.HIGH, AutonomousReactionValidity.IMMEDIATE)
+        scope.launch {
+            val goodbyeTopic = TopicBuilder.with(qiContext)
+                .withResource(R.raw.goodbye)
+                .build()
+            val goodbyeChatbot = QiChatbotBuilder.with(qiContext)
+                .withTopic(goodbyeTopic)
+                .build()
+            goodbyeChat = ChatBuilder.with(qiContext)
+                .withChatbot(goodbyeChatbot)
+                .build()
+            val bookmarks: Map<String, Bookmark> = goodbyeTopic.bookmarks
+            val proposalBookmark = bookmarks[PROPOSAL_BOOKMARK]
+            goodbyeChat.addOnStartedListener {
+                goodbyeChatbot.goToBookmark(proposalBookmark, AutonomousReactionImportance.HIGH, AutonomousReactionValidity.IMMEDIATE)
+            }
         }
     }
 
     override suspend fun sayGoodbyeAsync(): Deferred<Unit> =
-        withContext(dispatcher) {
-            return@withContext async {
+        scope.async {
+            if (this@GoodbyeControllerImpl::goodbyeChat.isInitialized) {
                 goodbyeChat.run()
             }
         }
 
     override suspend fun doBowActionAsync(): Deferred<Unit> =
-        withContext(dispatcher) {
-            return@withContext async {
-                // TODO: do BOW ANIMATION HERE
-            }
+        scope.async {
+            // TODO: do BOW ANIMATION HERE
         }
 
     companion object {
