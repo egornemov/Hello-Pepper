@@ -1,20 +1,23 @@
 package com.nemov.android.hellopepper
 
 import android.app.Application
+import com.aldebaran.qi.sdk.QiContext
 import com.nemov.android.hellopepper.greeting.*
+import com.nemov.android.hellopepper.greeting.goodbye.BaseGoodbyeServiceProvider
+import com.nemov.android.hellopepper.greeting.goodbye.GoodbyePresenter
 import com.nemov.android.libuniquejokes.BaseJokeServiceProvider
 import com.nemov.android.libuniquejokes.JokePresenter
 
-class HelloPepperApplication : Application(), PresentersProvider, ViewContext {
+class HelloPepperApplication : Application(), PresentersProvider, ViewContext, QiContextProvider {
 
-    private val greetingServiceProvider = object : BaseGreetingServiceProvider() {
-        override fun provideGreetingView() = greetingView
+    private val greetingServiceProvider = object : BaseGoodbyeServiceProvider() {
+        override fun provideGoodbyeView() = goodbyeView
     }
 
-    private lateinit var greetingView: GreetingPresenter.GreetingView
+    private lateinit var goodbyeView: GoodbyePresenter.GreetingView
 
-    override fun setGreetingView(view: GreetingPresenter.GreetingView) {
-        greetingView = view
+    override fun setGreetingView(view: GoodbyePresenter.GreetingView) {
+        goodbyeView = view
     }
 
     private val jokeServiceProvider = object : BaseJokeServiceProvider() {
@@ -29,17 +32,25 @@ class HelloPepperApplication : Application(), PresentersProvider, ViewContext {
         jokeView = view
     }
 
-    override fun provideGreetingPresenter() = greetingServiceProvider.provideGreetingPresenter()
+    override fun provideGreetingPresenter() = greetingServiceProvider.provideGoodbyePresenter()
 
     override fun provideJokePresenter() = jokeServiceProvider.provideJokePresenter()
+
+    override fun setQiContext(qiContext: QiContext) {
+        TODO("Not yet implemented")
+    }
 }
 
 interface PresentersProvider {
-    fun provideGreetingPresenter(): GreetingPresenter
+    fun provideGreetingPresenter(): GoodbyePresenter
     fun provideJokePresenter(): JokePresenter
 }
 
 interface ViewContext {
-    fun setGreetingView(view: GreetingPresenter.GreetingView)
+    fun setGreetingView(view: GoodbyePresenter.GreetingView)
     fun setJokeView(view: JokePresenter.JokeView)
+}
+
+interface  QiContextProvider {
+    fun setQiContext(qiContext: QiContext)
 }

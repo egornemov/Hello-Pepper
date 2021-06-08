@@ -10,23 +10,23 @@ import com.aldebaran.qi.sdk.builder.QiChatbotBuilder
 import com.aldebaran.qi.sdk.builder.TopicBuilder
 import com.aldebaran.qi.sdk.design.activity.RobotActivity
 import com.nemov.android.hellopepper.databinding.ActivityMainBinding
-import com.nemov.android.hellopepper.greeting.GreetingPresenter
+import com.nemov.android.hellopepper.greeting.goodbye.GoodbyePresenter
 import com.nemov.android.libuniquejokes.JokePresenter
 import kotlinx.coroutines.*
 
-class MainActivity : RobotActivity(), RobotLifecycleCallbacks, GreetingPresenter.GreetingView, JokePresenter.JokeView {
+class MainActivity : RobotActivity(), RobotLifecycleCallbacks, GoodbyePresenter.GreetingView, JokePresenter.JokeView {
 
     private val mainScope = MainScope()
 
     private lateinit var binding: ActivityMainBinding
 
-    private lateinit var greetingPresenter: GreetingPresenter
+    private lateinit var goodbyePresenter: GoodbyePresenter
 
     private lateinit var jokePresenter: JokePresenter
 
     private fun initPresents() {
         val presentersProvider = application as PresentersProvider
-        greetingPresenter = presentersProvider.provideGreetingPresenter()
+        goodbyePresenter = presentersProvider.provideGreetingPresenter()
         jokePresenter = presentersProvider.provideJokePresenter()
     }
 
@@ -34,6 +34,11 @@ class MainActivity : RobotActivity(), RobotLifecycleCallbacks, GreetingPresenter
         val viewContext = application as ViewContext
         viewContext.setGreetingView(this)
         viewContext.setJokeView(this)
+    }
+
+    private fun setQiContext(qiContext: QiContext) {
+        val qiContextProvider = application as QiContextProvider
+        qiContextProvider.setQiContext(qiContext)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -67,28 +72,8 @@ class MainActivity : RobotActivity(), RobotLifecycleCallbacks, GreetingPresenter
             .build()
     }
 
-    private lateinit var goodbyeChat: Chat
-
-    private fun initGoodbyeChat(qiContext: QiContext) {
-        val goodbyeTopic = TopicBuilder.with(qiContext)
-            .withResource(R.raw.goodbye)
-            .build()
-        val goodbyeChatbot = QiChatbotBuilder.with(qiContext)
-            .withTopic(goodbyeTopic)
-            .build()
-        goodbyeChat = ChatBuilder.with(qiContext)
-            .withChatbot(goodbyeChatbot)
-            .build()
-        val bookmarks: Map<String, Bookmark> = goodbyeTopic.bookmarks
-        val proposalBookmark = bookmarks["goodbye_proposal"]
-        goodbyeChat.addOnStartedListener {
-            goodbyeChatbot.goToBookmark(proposalBookmark, AutonomousReactionImportance.HIGH, AutonomousReactionValidity.IMMEDIATE)
-        }
-    }
-
     override fun onRobotFocusGained(qiContext: QiContext) {
-        initGoodbyeChat(qiContext)
-        initWelcommingChat(qiContext)
+        setQiContext(qiContext)
         welcommingChat.run()
     }
 
@@ -103,7 +88,7 @@ class MainActivity : RobotActivity(), RobotLifecycleCallbacks, GreetingPresenter
     private fun setupDataFlow() {
         binding.bSayGoodbye.setOnClickListener {
             mainScope.launch {
-                greetingPresenter.makeGreeting()
+                goodbyePresenter.startGoodbyeAction()
             }
         }
         binding.bMakeJoke.setOnClickListener {
@@ -113,18 +98,11 @@ class MainActivity : RobotActivity(), RobotLifecycleCallbacks, GreetingPresenter
         }
     }
 
-    override fun startGreeting(message: String) {
-        mainScope.launch {
-            goodbyeChat.run()
-            greetingPresenter.finishGreeting()
-        }
-    }
-
-    override fun loadingForGreeting() {
+    override fun goodbyeInAction() {
         binding.bSayGoodbye.isEnabled = false
     }
 
-    override fun readyForGreeting() {
+    override fun readyForGoodbye() {
         binding.bSayGoodbye.isEnabled = true
     }
 
