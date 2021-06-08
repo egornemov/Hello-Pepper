@@ -1,13 +1,12 @@
 package com.nemov.android.hellopepper.greeting.goodbye
 
 import com.aldebaran.qi.sdk.QiContext
+import com.aldebaran.qi.sdk.`object`.actuation.Animate
 import com.aldebaran.qi.sdk.`object`.conversation.AutonomousReactionImportance
 import com.aldebaran.qi.sdk.`object`.conversation.AutonomousReactionValidity
 import com.aldebaran.qi.sdk.`object`.conversation.Bookmark
 import com.aldebaran.qi.sdk.`object`.conversation.Chat
-import com.aldebaran.qi.sdk.builder.ChatBuilder
-import com.aldebaran.qi.sdk.builder.QiChatbotBuilder
-import com.aldebaran.qi.sdk.builder.TopicBuilder
+import com.aldebaran.qi.sdk.builder.*
 import com.nemov.android.hellopepper.R
 import kotlinx.coroutines.*
 
@@ -32,21 +31,41 @@ class GoodbyeControllerImpl(qiContext: QiContext,
             val bookmarks: Map<String, Bookmark> = goodbyeTopic.bookmarks
             val proposalBookmark = bookmarks[PROPOSAL_BOOKMARK]
             goodbyeChat.addOnStartedListener {
-                goodbyeChatbot.goToBookmark(proposalBookmark, AutonomousReactionImportance.HIGH, AutonomousReactionValidity.IMMEDIATE)
+                goodbyeChatbot.goToBookmark(
+                    proposalBookmark,
+                    AutonomousReactionImportance.HIGH,
+                    AutonomousReactionValidity.IMMEDIATE
+                )
             }
         }
     }
 
-    override suspend fun sayGoodbyeAsync(): Deferred<Unit> =
-        scope.async {
+    private lateinit var animateBow: Animate
+
+    init {
+        scope.launch {
+            val animation = AnimationBuilder.with(qiContext)
+                .withResources(R.raw.bow)
+                .build()
+            animateBow = AnimateBuilder.with(qiContext)
+                .withAnimation(animation)
+                .build()
+        }
+    }
+
+    override suspend fun sayGoodbye() {
+        scope.launch {
             if (this@GoodbyeControllerImpl::goodbyeChat.isInitialized) {
                 goodbyeChat.run()
             }
         }
+    }
 
     override suspend fun doBowActionAsync(): Deferred<Unit> =
         scope.async {
-            // TODO: do BOW ANIMATION HERE
+            if (this@GoodbyeControllerImpl::animateBow.isInitialized) {
+                animateBow.run()
+            }
         }
 
     companion object {

@@ -8,8 +8,7 @@ class GoodbyeUseCaseImpl(serviceLocator: GoodbyeServiceLocator): GoodbyeUseCase 
 
     override suspend fun doGoodbyeAction() {
         val deferredBow = controller.doBowActionAsync()
-        val deferredGoodbye = controller.sayGoodbyeAsync()
-        deferredGoodbye.await()
+        controller.sayGoodbye()
         deferredBow.await()
         loggerGateway.log(TAG, "Greeting is finished")
         presenter.finishGoodbyeAction()
