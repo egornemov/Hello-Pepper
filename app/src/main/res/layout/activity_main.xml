@@ -13,8 +13,7 @@
         android:layout_height="wrap_content"
         android:hint="@string/joke_holder_hint"
         android:autofillHints="string"
-        android:inputType="text"
-        android:maxLines="10"
+        android:inputType="textMultiLine"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"/>
 

@@ -90,7 +90,5 @@ class MainActivity : AppCompatActivity(), GreetingPresenter.GreetingView, JokePr
     override fun readyForJoke() {
         binding.bMakeJoke.isEnabled = true
         binding.etJokeHolder.isEnabled = true
-        binding.root.requestLayout()
-        binding.root.invalidate()
     }
 }
