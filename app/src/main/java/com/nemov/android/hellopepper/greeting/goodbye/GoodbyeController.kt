@@ -1,8 +1,8 @@
 package com.nemov.android.hellopepper.greeting.goodbye
 
-import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.Job
 
 interface GoodbyeController {
     suspend fun sayGoodbye()
-    suspend fun doBowActionAsync(): Deferred<Unit>
+    suspend fun doBowAction(): Job
 }

@@ -61,8 +61,8 @@ class GoodbyeControllerImpl(qiContext: QiContext,
         }
     }
 
-    override suspend fun doBowActionAsync(): Deferred<Unit> =
-        scope.async {
+    override suspend fun doBowAction(): Job =
+        scope.launch {
             if (this@GoodbyeControllerImpl::animateBow.isInitialized) {
                 animateBow.run()
             }

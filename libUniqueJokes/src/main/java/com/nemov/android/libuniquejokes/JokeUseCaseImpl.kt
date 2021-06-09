@@ -1,18 +1,25 @@
 package com.nemov.android.libuniquejokes
 
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
+
 class JokeUseCaseImpl(serviceLocator: JokeServiceLocator,
                       private val numberOfAttempts: Int = NUMBER_OF_ATTEMPTS): JokeUseCase {
+
+    private val dispatcher = serviceLocator.provideUseCaseDispatcher()
     private val presenter: JokePresenter by lazy { serviceLocator.provideJokePresenter() }
     private val controller = serviceLocator.provideJokeController()
     private val gateway = serviceLocator.provideJokeGateway()
 
     override suspend fun makeJoke() {
-        val joke = uniqueJoke()
-        joke?.run {
-            presenter.showJoke(joke)
-            gateway.saveJoke(joke)
-        } ?: run {
-            presenter.showError()
+        CoroutineScope(dispatcher).launch {
+            val joke = uniqueJoke()
+            joke?.run {
+                presenter.showJoke(joke)
+                gateway.saveJoke(joke)
+            } ?: run {
+                presenter.showError()
+            }
         }
     }
 

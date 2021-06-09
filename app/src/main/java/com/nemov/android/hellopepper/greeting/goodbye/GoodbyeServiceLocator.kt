@@ -5,6 +5,7 @@ import com.nemov.android.hellopepper.logger.LoggerGateway
 import kotlinx.coroutines.CoroutineDispatcher
 
 interface GoodbyeServiceLocator {
+    fun provideUseCaseDispatcher(): CoroutineDispatcher
     fun provideGoodbyeUseCase(): GoodbyeUseCase
     fun provideGoodbyeView(): GoodbyePresenter.GreetingView
     fun provideGoodbyePresenter(): GoodbyePresenter

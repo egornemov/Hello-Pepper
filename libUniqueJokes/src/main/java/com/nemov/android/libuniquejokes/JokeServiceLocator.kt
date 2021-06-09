@@ -4,6 +4,7 @@ import android.content.Context
 import kotlinx.coroutines.CoroutineDispatcher
 
 interface JokeServiceLocator {
+    fun provideUseCaseDispatcher(): CoroutineDispatcher
     fun provideJokeUseCase(): JokeUseCase
     fun provideJokeView(): JokePresenter.JokeView
     fun provideJokePresenter(): JokePresenter

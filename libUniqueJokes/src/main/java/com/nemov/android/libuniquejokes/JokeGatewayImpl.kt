@@ -2,6 +2,8 @@ package com.nemov.android.libuniquejokes
 
 import android.content.Context
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.*
 import kotlin.streams.toList
@@ -10,7 +12,7 @@ class JokeGatewayImpl(private val context: Context,
                       private val dispatcher: CoroutineDispatcher) : JokeGateway {
 
     override suspend fun saveJoke(joke: String) {
-        withContext(dispatcher) {
+        CoroutineScope(dispatcher).launch {
             kotlin.runCatching {
                 val fos = context.openFileOutput(USER_JOKES_FILE, Context.MODE_APPEND)
                 val osw = OutputStreamWriter(fos)
